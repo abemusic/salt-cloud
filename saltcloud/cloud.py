@@ -402,6 +402,7 @@ class Cloud(object):
                 for name in vms:
                     if name in names:
                         vms_to_destroy.add((alias, driver, name))
+                        names.remove(name)
 
         for alias, driver, name in vms_to_destroy:
             fun = '{0}.destroy'.format(driver)
@@ -412,7 +413,6 @@ class Cloud(object):
             if driver not in processed[alias]:
                 processed[alias][driver] = {}
             processed[alias][driver][name] = ret
-            names.remove(name)
 
             if not ret:
                 continue
@@ -872,6 +872,8 @@ class Map(Cloud):
             for alias, drivers in matching.iteritems():
                 for driver, vms in drivers.iteritems():
                     for vm_name, vm_details in vms.iteritems():
+                        if vm_name not in names:
+                            continue
                         if alias not in interpolated_map:
                             interpolated_map[alias] = {}
                         if driver not in interpolated_map[alias]:
